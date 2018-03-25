@@ -20,7 +20,6 @@ class PlainSinkProducerActor extends Actor with ActorLogging {
   val producerSettings = ProducerSettings(context.system,
                                           new ByteArraySerializer,
                                           new StringSerializer)
-  val kafkaProducer = producerSettings.createKafkaProducer()
 
   override def preStart = {
     log.info("Start producer actor")
@@ -36,8 +35,8 @@ class PlainSinkProducerActor extends Actor with ActorLogging {
       val done = Source(1 to 5)
         .map(_.toString)
         .map { elem =>
-          new ProducerRecord[Array[Byte], String]("video2", elem)
+          new ProducerRecord[Array[Byte], String]("topic1", elem)
         }
-        .runWith(Producer.plainSink(producerSettings, kafkaProducer))
+        .runWith(Producer.plainSink(producerSettings))
   }
 }

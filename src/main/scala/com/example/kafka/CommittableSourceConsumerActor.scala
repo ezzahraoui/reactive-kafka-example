@@ -35,9 +35,7 @@ class CommittableSourceConsumerActor extends Actor with ActorLogging {
   def receive = {
     case "start" =>
       Consumer
-        .committableSource(
-          consumerSettings,
-          Subscriptions.assignment(new TopicPartition("video2", 1)))
+        .committableSource(consumerSettings, Subscriptions.topics("topic1"))
         .mapAsync(1) { msg =>
           log.info(s"CommittableSourceConsumer consume: $msg")
           msg.committableOffset.commitScaladsl()
@@ -46,7 +44,6 @@ class CommittableSourceConsumerActor extends Actor with ActorLogging {
         .recoverWith {
           case e =>
             log.error("Exception: {}", e)
-            self ! "start"
             Future.successful(Unit)
         }
   }
